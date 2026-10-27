@@ -17,3 +17,16 @@ export function getCurrencies() {
 export function getRate(from, to) {
   return request(`/rate/${from.toLowerCase()}/${to.toLowerCase()}`)
 }
+
+export function getHistory(from, to, startDate, endDate, group) {
+  const params = new URLSearchParams({
+    base: from.toLowerCase(),
+    quotes: to.toLowerCase(),
+    from: startDate,
+    to: endDate,
+  })
+
+  if (group) params.set('group', group)
+
+  return request(`/rates?${params}`)
+}

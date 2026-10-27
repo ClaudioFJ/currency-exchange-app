@@ -4,11 +4,16 @@ import CurrencyConverter from './components/CurrencyConverter/CurrencyConverter'
 import { useCurrencies } from './hooks/useCurrencies'
 import { useExchangeRate } from './hooks/useExchangeRate'
 import styles from './App.module.css'
+import HistorySection from './components/HistorySection/HistorySection'
+import { useHistoricalRates } from './hooks/useHistoricalRates'
+import { DEFAULT_PERIOD } from './constants/periods'
+
 
 function App() {
   const [fromCurrency, setFromCurrency] = useState('USD')
   const [toCurrency, setToCurrency] = useState('BRL')
   const [amount, setAmount] = useState('100')
+  const [period, setPeriod] = useState(DEFAULT_PERIOD)
 
   const { currencies, error: currenciesError } = useCurrencies()
   const {
@@ -16,6 +21,12 @@ function App() {
     loading: rateLoading,
     error: rateError,
   } = useExchangeRate(fromCurrency, toCurrency)
+
+  const {
+    history,
+    loading: historyLoading,
+    error: historyError,
+  } = useHistoricalRates(fromCurrency, toCurrency, period)
 
   function handleSwap() {
     setFromCurrency(toCurrency)
@@ -49,6 +60,15 @@ function App() {
           onToChange={handleToChange}
           onAmountChange={setAmount}
           onSwap={handleSwap}
+        />
+        <HistorySection
+          history={history}
+          period={period}
+          onPeriodChange={setPeriod}
+          fromCurrency={fromCurrency}
+          toCurrency={toCurrency}
+          loading={historyLoading}
+          error={historyError}
         />
       </main>
     </div>
