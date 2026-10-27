@@ -1,4 +1,4 @@
-import { formatDate, formatRate } from './format'
+import { formatDate, formatRate } from './format.js'
 
 const HEADERS = ['Data', 'Moeda de origem', 'Moeda de destino', 'Cotação']
 
