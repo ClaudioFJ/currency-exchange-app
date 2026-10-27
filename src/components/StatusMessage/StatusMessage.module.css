@@ -1,0 +1,17 @@
+.message {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.loading,
+.empty {
+  background: var(--color-bg);
+  color: var(--color-muted);
+}
+
+.error {
+  background: #fef2f2;
+  color: var(--color-error);
+}
