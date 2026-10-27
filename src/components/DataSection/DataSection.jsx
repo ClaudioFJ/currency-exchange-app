@@ -4,6 +4,7 @@ import RatesTable from '../RatesTable/RatesTable'
 import StatusMessage from '../StatusMessage/StatusMessage'
 import { filterRates, sortRates, validateFilters } from '../../utils/filters'
 import styles from './DataSection.module.css'
+import ExportButton from '../ExportButton/ExportButton'
 
 const INITIAL_FILTERS = { startDate: '', endDate: '', minRate: '', maxRate: '' }
 const INITIAL_SORT = { field: 'date', direction: 'desc' }
@@ -64,6 +65,7 @@ function DataSection({ history, fromCurrency, toCurrency, loading, error }) {
         <h2 className={styles.heading}>
           Dados {fromCurrency} → {toCurrency}
         </h2>
+        <ExportButton rows={visibleRows} fromCurrency={fromCurrency} toCurrency={toCurrency} />
       </div>
 
       {renderContent()}
