@@ -1,0 +1,333 @@
+{
+  "info": {
+    "_postman_id": "9ba179d5-aedd-4b34-a11e-29c9b7d13f37",
+    "name": "Currency Exchange App — Frankfurter API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "59096016",
+    "_collection_link": "https://go.postman.co/collection/59096016-9ba179d5-aedd-4b34-a11e-29c9b7d13f37?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Sucesso",
+      "item": [
+        {
+          "name": "Moedas disponíveis",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\n\r\nconst json = pm.response.json();\r\n\r\npm.test(\"Retorna um array não vazio\", () => {\r\n  pm.expect(json).to.be.an(\"array\").that.is.not.empty;\r\n});\r\n\r\npm.test(\"Cada moeda tem iso_code e name\", () => {\r\n  json.forEach((moeda) => {\r\n    pm.expect(moeda).to.have.property(\"iso_code\");\r\n    pm.expect(moeda).to.have.property(\"name\");\r\n  });\r\n});\r\n\r\npm.test(\"Lista contém BRL e USD\", () => {\r\n  const codigos = json.map((m) => m.iso_code);\r\n  pm.expect(codigos).to.include.members([\"BRL\", \"USD\"]);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/currencies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "currencies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cotação mais recente EUR → USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\n\r\nconst json = pm.response.json();\r\n\r\npm.test(\"Tem date, base, quote e rate\", () => {\r\n  pm.expect(json).to.include.keys(\"date\", \"base\", \"quote\", \"rate\");\r\n});\r\n\r\npm.test(\"rate é um número positivo\", () => {\r\n  pm.expect(json.rate).to.be.a(\"number\").and.above(0);\r\n});\r\n\r\npm.test(\"Tempo de resposta menor que 2s\", () => {\r\n  pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rate/eur/usd",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rate",
+                "eur",
+                "usd"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cotação em data específica",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rate/usd/brl?date=2026-10-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rate",
+                "usd",
+                "brl"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-10-01"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Data sem cotação (fim de semana)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rate/usd/brl?date=2026-10-18",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rate",
+                "usd",
+                "brl"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-10-18"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Histórico por intervalo (30 dias)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\n\r\nconst json = pm.response.json();\r\n\r\npm.test(\"Retorna array com registros\", () => {\r\n  pm.expect(json).to.be.an(\"array\").that.is.not.empty;\r\n});\r\n\r\npm.test(\"Registros em ordem crescente de data\", () => {\r\n  for (let i = 1; i < json.length; i++) {\r\n    pm.expect(json[i].date >= json[i - 1].date).to.be.true;\r\n  }\r\n});\r\n\r\npm.test(\"Todos os registros são USD → BRL\", () => {\r\n  json.forEach((r) => {\r\n    pm.expect(r.base).to.eql(\"USD\");\r\n    pm.expect(r.quote).to.eql(\"BRL\");\r\n  });\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rates?base=usd&quotes=brl&from=2026-09-20&to=2026-10-20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rates"
+              ],
+              "query": [
+                {
+                  "key": "base",
+                  "value": "usd"
+                },
+                {
+                  "key": "quotes",
+                  "value": "brl"
+                },
+                {
+                  "key": "from",
+                  "value": "2026-09-20"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Histórico longo agrupado (10 anos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\n\r\nconst json = pm.response.json();\r\n\r\npm.test(\"Retorna array com registros\", () => {\r\n  pm.expect(json).to.be.an(\"array\").that.is.not.empty;\r\n});\r\n\r\npm.test(\"Registros em ordem crescente de data\", () => {\r\n  for (let i = 1; i < json.length; i++) {\r\n    pm.expect(json[i].date >= json[i - 1].date).to.be.true;\r\n  }\r\n});\r\n\r\npm.test(\"Todos os registros são USD → BRL\", () => {\r\n  json.forEach((r) => {\r\n    pm.expect(r.base).to.eql(\"USD\");\r\n    pm.expect(r.quote).to.eql(\"BRL\");\r\n  });\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rates?base=usd&quotes=brl&from=2016-10-20&to=2026-10-20&group=month",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rates"
+              ],
+              "query": [
+                {
+                  "key": "base",
+                  "value": "usd"
+                },
+                {
+                  "key": "quotes",
+                  "value": "brl"
+                },
+                {
+                  "key": "from",
+                  "value": "2016-10-20"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-20"
+                },
+                {
+                  "key": "group",
+                  "value": "month"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Erro",
+      "item": [
+        {
+          "name": "Moeda inválida",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status de erro do cliente (4xx)\", () => {\r\n  pm.expect(pm.response.code).to.be.within(400, 499);\r\n});\r\n\r\npm.test(\"Corpo tem uma mensagem de erro\", () => {\r\n  pm.expect(pm.response.json()).to.have.property(\"message\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rate/eur/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rate",
+                "eur",
+                "abc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Data inválida",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status de erro do cliente (4xx)\", () => {\r\n  pm.expect(pm.response.code).to.be.within(400, 499);\r\n});\r\n\r\npm.test(\"Corpo tem uma mensagem de erro\", () => {\r\n  pm.expect(pm.response.json()).to.have.property(\"message\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rate/eur/usd?date=2026-13-45",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rate",
+                "eur",
+                "usd"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-13-45"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Data Futura",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status de erro do cliente (4xx)\", () => {\r\n  pm.expect(pm.response.code).to.be.within(400, 499);\r\n});\r\n\r\npm.test(\"Corpo tem uma mensagem de erro\", () => {\r\n  pm.expect(pm.response.json()).to.have.property(\"message\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rate/eur/usd?date=2030-01-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rate",
+                "eur",
+                "usd"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2030-01-01"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+.result {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--color-primary-soft);
+}
+
+.from {
+  color: var(--color-muted);
+}
+
+.value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.details {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
