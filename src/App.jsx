@@ -7,6 +7,7 @@ import styles from './App.module.css'
 import HistorySection from './components/HistorySection/HistorySection'
 import { useHistoricalRates } from './hooks/useHistoricalRates'
 import { DEFAULT_PERIOD } from './constants/periods'
+import DataSection from './components/DataSection/DataSection'
 
 
 function App() {
@@ -65,6 +66,14 @@ function App() {
           history={history}
           period={period}
           onPeriodChange={setPeriod}
+          fromCurrency={fromCurrency}
+          toCurrency={toCurrency}
+          loading={historyLoading}
+          error={historyError}
+        />
+        <DataSection
+          key={`${fromCurrency}-${toCurrency}-${period}`}
+          history={history}
           fromCurrency={fromCurrency}
           toCurrency={toCurrency}
           loading={historyLoading}
