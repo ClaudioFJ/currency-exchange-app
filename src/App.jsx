@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import Header from './components/Header/Header'
 import CurrencyConverter from './components/CurrencyConverter/CurrencyConverter'
-import { MOCK_CURRENCIES, MOCK_RATE } from './constants/mockData'
+import { useCurrencies } from './hooks/useCurrencies'
+import { useExchangeRate } from './hooks/useExchangeRate'
 import styles from './App.module.css'
 
 function App() {
@@ -9,13 +10,18 @@ function App() {
   const [toCurrency, setToCurrency] = useState('BRL')
   const [amount, setAmount] = useState('100')
 
+  const { currencies, error: currenciesError } = useCurrencies()
+  const {
+    rateData,
+    loading: rateLoading,
+    error: rateError,
+  } = useExchangeRate(fromCurrency, toCurrency)
+
   function handleSwap() {
     setFromCurrency(toCurrency)
     setToCurrency(fromCurrency)
   }
 
-  // RN04: origem e destino devem ser diferentes.
-  // Se o usuário escolher a mesma moeda do outro lado, as moedas são trocadas.
   function handleFromChange(code) {
     if (code === toCurrency) setToCurrency(fromCurrency)
     setFromCurrency(code)
@@ -32,11 +38,13 @@ function App() {
 
       <main className={styles.main}>
         <CurrencyConverter
-          currencies={MOCK_CURRENCIES}
+          currencies={currencies}
           fromCurrency={fromCurrency}
           toCurrency={toCurrency}
           amount={amount}
-          rateData={MOCK_RATE}
+          rateData={rateData}
+          loading={rateLoading}
+          error={currenciesError || rateError}
           onFromChange={handleFromChange}
           onToChange={handleToChange}
           onAmountChange={setAmount}
