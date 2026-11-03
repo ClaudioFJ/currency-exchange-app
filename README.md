@@ -1,6 +1,6 @@
 # Currency Exchange App
 
-Single Page Application em React para **conversão e análise de moedas**, consumindo a [API Frankfurter](https://frankfurter.dev).
+Single Page Application em React para **MoneyMap**, consumindo a [API Frankfurter](https://frankfurter.dev).
 
 Projeto individual desenvolvido de forma incremental, aplicando os conteúdos das aulas: componentização, props, eventos, `useState`, lifting state up, `useEffect`, hooks customizados, consumo de API, manipulação de arrays e objetos, gráficos, filtros, ordenação e exportação CSV.
 
