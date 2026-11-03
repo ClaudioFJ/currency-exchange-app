@@ -1,8 +1,10 @@
 import PeriodSelector from '../PeriodSelector/PeriodSelector'
 import RateChart from '../RateChart/RateChart'
+import StatsCards from '../StatsCards/StatsCards'
 import StatusMessage from '../StatusMessage/StatusMessage'
 import { useLanguage } from '../../hooks/useLanguage'
 import { PERIODS } from '../../constants/periods'
+import { calculateStats } from '../../utils/stats'
 import styles from './HistorySection.module.css'
 
 function HistorySection({ history, period, onPeriodChange, fromCurrency, toCurrency, loading, error, theme }) {
@@ -15,7 +17,12 @@ function HistorySection({ history, period, onPeriodChange, fromCurrency, toCurre
       return <StatusMessage type="empty" message={t('history.empty')} />
     }
 
-    return <RateChart data={history} fromCurrency={fromCurrency} toCurrency={toCurrency} theme={theme} />
+    return (
+      <>
+        <StatsCards stats={calculateStats(history)} />
+        <RateChart data={history} fromCurrency={fromCurrency} toCurrency={toCurrency} theme={theme} />
+      </>
+    )
   }
 
   return (

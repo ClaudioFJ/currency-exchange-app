@@ -2,7 +2,8 @@
 // Como rodar: npm run test:functions
 
 import { parseAmount, convertAmount } from '../src/utils/conversion.js'
-import { formatCurrency, formatRate, formatDate } from '../src/utils/format.js'
+import { formatCurrency, formatRate, formatDate, formatPercent } from '../src/utils/format.js'
+import { calculateStats } from '../src/utils/stats.js'
 import { toISODate, getDateRange } from '../src/utils/dates.js'
 import { filterRates, sortRates, validateFilters } from '../src/utils/filters.js'
 import { buildCsv, getDateBounds } from '../src/utils/csv.js'
@@ -134,6 +135,16 @@ test('FT42', 'localizeCurrencyNames traduz o nome da moeda',
   localizeCurrencyNames(SAMPLE_CURRENCIES, 'pt-BR')[0].name, 'Real brasileiro')
 test('FT43', 'localizeCurrencyNames mantém o nome da API quando não há tradução',
   localizeCurrencyNames(SAMPLE_CURRENCIES, 'pt-BR')[1].name, 'COMESA Dollar')
+
+// stats.js (ROWS fora de ordem, para provar que a função ordena antes)
+const stats = calculateStats([ROWS[2], ROWS[0], ROWS[3], ROWS[1]])
+test('FT44', 'calculateStats acha a mínima e a data dela', [stats.min.rate, stats.min.date], [5.0017, '2026-10-13'])
+test('FT45', 'calculateStats acha a máxima e a data dela', [stats.max.rate, stats.max.date], [5.0698, '2026-10-16'])
+test('FT46', 'calculateStats calcula a média', formatRate(stats.average), '5,0335')
+test('FT47', 'calculateStats calcula a variação entre a primeira e a última data',
+  formatPercent(stats.changePercent), '+1,36%')
+test('FT48', 'calculateStats devolve null sem dados', calculateStats([]), null)
+test('FT49', 'formatPercent mostra o sinal de queda', formatPercent(-0.5, 'en-US'), '-0.50%')
 
 console.log(`\n${passed} passaram, ${failed} falharam`)
 if (failed > 0) process.exit(1)

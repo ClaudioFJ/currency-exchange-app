@@ -24,3 +24,13 @@ export function formatDate(isoDate, locale = DEFAULT_LOCALE) {
     timeZone: 'UTC',
   })
 }
+
+// Recebe o valor em pontos percentuais (ex.: 1.5 para 1,5%) e mostra o sinal
+export function formatPercent(value, locale = DEFAULT_LOCALE) {
+  return (value / 100).toLocaleString(locale, {
+    style: 'percent',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    signDisplay: 'exceptZero',
+  })
+}

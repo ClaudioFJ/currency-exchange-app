@@ -27,6 +27,15 @@ export const TRANSLATIONS = {
       loading: 'Carregando histórico...',
       empty: 'Nenhuma cotação encontrada para este período.',
     },
+    stats: {
+      min: 'Mínima',
+      max: 'Máxima',
+      average: 'Média',
+      change: 'Variação',
+      on: 'em {date}',
+      ratesOne: '{count} cotação',
+      ratesOther: '{count} cotações',
+    },
     periods: {
       '7D': '7D',
       '15D': '15D',
@@ -113,6 +122,15 @@ export const TRANSLATIONS = {
       loading: 'Loading history...',
       empty: 'No rates found for this period.',
     },
+    stats: {
+      min: 'Low',
+      max: 'High',
+      average: 'Average',
+      change: 'Change',
+      on: 'on {date}',
+      ratesOne: '{count} rate',
+      ratesOther: '{count} rates',
+    },
     periods: {
       '7D': '7D',
       '15D': '15D',
@@ -198,6 +216,15 @@ export const TRANSLATIONS = {
       periodGroup: 'Período de análisis',
       loading: 'Cargando historial...',
       empty: 'No se encontraron cotizaciones para este período.',
+    },
+    stats: {
+      min: 'Mínima',
+      max: 'Máxima',
+      average: 'Media',
+      change: 'Variación',
+      on: 'el {date}',
+      ratesOne: '{count} cotización',
+      ratesOther: '{count} cotizaciones',
     },
     periods: {
       '7D': '7D',
