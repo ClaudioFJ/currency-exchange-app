@@ -21,6 +21,13 @@ export const TRANSLATIONS = {
       loading: 'Buscando cotação...',
       quotedOn: 'Cotação de {date}',
     },
+    favorites: {
+      title: 'Favoritos',
+      add: 'Adicionar par aos favoritos',
+      remove: 'Remover par dos favoritos',
+      removeItem: 'Remover {pair} dos favoritos',
+      empty: 'Nenhum favorito ainda. Clique na ☆ para salvar o par atual.',
+    },
     history: {
       heading: 'Histórico {pair}',
       periodGroup: 'Período de análise',
@@ -116,6 +123,13 @@ export const TRANSLATIONS = {
       loading: 'Fetching rate...',
       quotedOn: 'Rate from {date}',
     },
+    favorites: {
+      title: 'Favorites',
+      add: 'Add pair to favorites',
+      remove: 'Remove pair from favorites',
+      removeItem: 'Remove {pair} from favorites',
+      empty: 'No favorites yet. Click the ☆ to save the current pair.',
+    },
     history: {
       heading: 'History {pair}',
       periodGroup: 'Analysis period',
@@ -210,6 +224,13 @@ export const TRANSLATIONS = {
       amountError: 'Introduce un número mayor que cero.',
       loading: 'Buscando cotización...',
       quotedOn: 'Cotización del {date}',
+    },
+    favorites: {
+      title: 'Favoritos',
+      add: 'Añadir par a favoritos',
+      remove: 'Quitar par de favoritos',
+      removeItem: 'Quitar {pair} de favoritos',
+      empty: 'Aún no hay favoritos. Haz clic en la ☆ para guardar el par actual.',
     },
     history: {
       heading: 'Historial {pair}',

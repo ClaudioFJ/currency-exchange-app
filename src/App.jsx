@@ -7,6 +7,8 @@ import { useCurrencies } from './hooks/useCurrencies'
 import { useExchangeRate } from './hooks/useExchangeRate'
 import { useHistoricalRates } from './hooks/useHistoricalRates'
 import { useTheme } from './hooks/useTheme'
+import { useFavorites } from './hooks/useFavorites'
+import { makePairKey, parsePairKey } from './utils/favorites'
 import { DEFAULT_PERIOD } from './constants/periods'
 import styles from './App.module.css'
 
@@ -17,6 +19,7 @@ function App() {
   const [period, setPeriod] = useState(DEFAULT_PERIOD)
 
   const { theme, toggleTheme } = useTheme()
+  const { favorites, toggleFavorite, removeFavorite } = useFavorites()
   const { currencies, error: currenciesError } = useCurrencies()
   const {
     rateData,
@@ -28,6 +31,14 @@ function App() {
     loading: historyLoading,
     error: historyError,
   } = useHistoricalRates(fromCurrency, toCurrency, period)
+
+  const currentPair = makePairKey(fromCurrency, toCurrency)
+
+  function handleSelectFavorite(pair) {
+    const { from, to } = parsePairKey(pair)
+    setFromCurrency(from)
+    setToCurrency(to)
+  }
 
   function handleSwap() {
     setFromCurrency(toCurrency)
@@ -61,6 +72,11 @@ function App() {
           onToChange={handleToChange}
           onAmountChange={setAmount}
           onSwap={handleSwap}
+          favorites={favorites}
+          currentPair={currentPair}
+          onToggleFavorite={() => toggleFavorite(currentPair)}
+          onSelectFavorite={handleSelectFavorite}
+          onRemoveFavorite={removeFavorite}
         />
 
         <HistorySection

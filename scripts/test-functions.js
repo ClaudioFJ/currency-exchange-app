@@ -4,6 +4,7 @@
 import { parseAmount, convertAmount } from '../src/utils/conversion.js'
 import { formatCurrency, formatRate, formatDate, formatPercent } from '../src/utils/format.js'
 import { calculateStats } from '../src/utils/stats.js'
+import { makePairKey, parsePairKey, toggleItem } from '../src/utils/favorites.js'
 import { toISODate, getDateRange } from '../src/utils/dates.js'
 import { filterRates, sortRates, validateFilters } from '../src/utils/filters.js'
 import { buildCsv, getDateBounds } from '../src/utils/csv.js'
@@ -145,6 +146,15 @@ test('FT47', 'calculateStats calcula a variação entre a primeira e a última d
   formatPercent(stats.changePercent), '+1,36%')
 test('FT48', 'calculateStats devolve null sem dados', calculateStats([]), null)
 test('FT49', 'formatPercent mostra o sinal de queda', formatPercent(-0.5, 'en-US'), '-0.50%')
+
+// favorites.js
+test('FT50', 'makePairKey junta as moedas', makePairKey('USD', 'BRL'), 'USD-BRL')
+test('FT51', 'parsePairKey separa as moedas', parsePairKey('EUR-JPY'), { from: 'EUR', to: 'JPY' })
+test('FT52', 'toggleItem adiciona quando não existe', toggleItem(['USD-BRL'], 'EUR-BRL'), ['USD-BRL', 'EUR-BRL'])
+test('FT53', 'toggleItem remove quando já existe', toggleItem(['USD-BRL', 'EUR-BRL'], 'USD-BRL'), ['EUR-BRL'])
+const favoritesList = ['USD-BRL']
+toggleItem(favoritesList, 'EUR-BRL')
+test('FT54', 'toggleItem não altera a lista original', favoritesList, ['USD-BRL'])
 
 console.log(`\n${passed} passaram, ${failed} falharam`)
 if (failed > 0) process.exit(1)

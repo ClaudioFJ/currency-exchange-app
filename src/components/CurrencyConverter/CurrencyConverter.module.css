@@ -5,8 +5,15 @@
   background: var(--color-surface);
 }
 
+.headingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .heading {
-  margin-bottom: 16px;
   font-size: 1.125rem;
 }
 

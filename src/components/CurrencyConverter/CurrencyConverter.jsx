@@ -3,6 +3,8 @@ import SwapButton from '../SwapButton/SwapButton'
 import AmountInput from '../AmountInput/AmountInput'
 import ConversionResult from '../ConversionResult/ConversionResult'
 import StatusMessage from '../StatusMessage/StatusMessage'
+import FavoriteButton from '../FavoriteButton/FavoriteButton'
+import FavoritesBar from '../FavoritesBar/FavoritesBar'
 import { useLanguage } from '../../hooks/useLanguage'
 import { parseAmount, convertAmount } from '../../utils/conversion'
 import { localizeCurrencyNames } from '../../utils/currencyNames'
@@ -20,6 +22,11 @@ function CurrencyConverter({
   onToChange,
   onAmountChange,
   onSwap,
+  favorites,
+  currentPair,
+  onToggleFavorite,
+  onSelectFavorite,
+  onRemoveFavorite,
 }) {
   const { t, locale } = useLanguage()
 
@@ -31,7 +38,17 @@ function CurrencyConverter({
 
   return (
     <section className={styles.card}>
-      <h2 className={styles.heading}>{t('converter.heading')}</h2>
+      <div className={styles.headingRow}>
+        <h2 className={styles.heading}>{t('converter.heading')}</h2>
+        <FavoriteButton active={favorites.includes(currentPair)} onToggle={onToggleFavorite} />
+      </div>
+
+      <FavoritesBar
+        favorites={favorites}
+        currentPair={currentPair}
+        onSelect={onSelectFavorite}
+        onRemove={onRemoveFavorite}
+      />
 
       <div className={styles.currencies}>
         <CurrencySelect
