@@ -4,7 +4,7 @@ import StatusMessage from '../StatusMessage/StatusMessage'
 import { PERIODS } from '../../constants/periods'
 import styles from './HistorySection.module.css'
 
-function HistorySection({ history, period, onPeriodChange, fromCurrency, toCurrency, loading, error }) {
+function HistorySection({ history, period, onPeriodChange, fromCurrency, toCurrency, loading, error, theme }) {
   function renderContent() {
     if (error) return <StatusMessage type="error" message={error} />
     if (loading) return <StatusMessage type="loading" message="Carregando histórico..." />
@@ -12,7 +12,7 @@ function HistorySection({ history, period, onPeriodChange, fromCurrency, toCurre
       return <StatusMessage type="empty" message="Nenhuma cotação encontrada para este período." />
     }
 
-    return <RateChart data={history} fromCurrency={fromCurrency} toCurrency={toCurrency} />
+    return <RateChart data={history} fromCurrency={fromCurrency} toCurrency={toCurrency} theme={theme} />
   }
 
   return (

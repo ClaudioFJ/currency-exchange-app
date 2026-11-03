@@ -8,6 +8,7 @@ import HistorySection from './components/HistorySection/HistorySection'
 import { useHistoricalRates } from './hooks/useHistoricalRates'
 import { DEFAULT_PERIOD } from './constants/periods'
 import DataSection from './components/DataSection/DataSection'
+import { useTheme } from './hooks/useTheme'
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
   const [toCurrency, setToCurrency] = useState('BRL')
   const [amount, setAmount] = useState('100')
   const [period, setPeriod] = useState(DEFAULT_PERIOD)
+  const { theme, toggleTheme } = useTheme()
 
   const { currencies, error: currenciesError } = useCurrencies()
   const {
@@ -46,7 +48,12 @@ function App() {
 
   return (
     <div className={styles.container}>
-      <Header title="Currency Exchange App" subtitle="Conversão e análise de moedas" />
+      <Header
+        title="Currency Exchange App"
+        subtitle="Conversão e análise de moedas"
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
 
       <main className={styles.main}>
         <CurrencyConverter
@@ -70,6 +77,7 @@ function App() {
           toCurrency={toCurrency}
           loading={historyLoading}
           error={historyError}
+          theme={theme}
         />
         <DataSection
           key={`${fromCurrency}-${toCurrency}-${period}`}
