@@ -122,6 +122,9 @@ LanguageProvider
 ├── CurrencyConverter
 │   ├── FavoriteButton
 │   ├── FavoritesBar
+App
+├── Header
+├── CurrencyConverter
 │   ├── CurrencySelect (origem)
 │   ├── SwapButton
 │   ├── CurrencySelect (destino)
