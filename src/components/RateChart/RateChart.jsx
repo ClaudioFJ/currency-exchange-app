@@ -7,6 +7,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts'
+import { useLanguage } from '../../hooks/useLanguage'
 import { formatDate, formatRate } from '../../utils/format'
 import styles from './RateChart.module.css'
 
@@ -16,7 +17,13 @@ const CHART_COLORS = {
 }
 
 function RateChart({ data, fromCurrency, toCurrency, theme }) {
+  const { locale } = useLanguage()
   const colors = CHART_COLORS[theme]
+
+  // O Recharts chama os formatadores com (valor, índice). As arrow functions
+  // garantem que o segundo argumento seja o locale, e não o índice.
+  const formatAxisDate = (value) => formatDate(value, locale)
+  const formatAxisRate = (value) => formatRate(value, locale)
 
   return (
     <div className={styles.wrapper}>
@@ -25,21 +32,21 @@ function RateChart({ data, fromCurrency, toCurrency, theme }) {
           <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} />
           <XAxis
             dataKey="date"
-            tickFormatter={formatDate}
+            tickFormatter={formatAxisDate}
             minTickGap={32}
             stroke={colors.text}
             tick={{ fontSize: 12, fill: colors.text }}
           />
           <YAxis
             domain={['auto', 'auto']}
-            tickFormatter={formatRate}
+            tickFormatter={formatAxisRate}
             width={72}
             stroke={colors.text}
             tick={{ fontSize: 12, fill: colors.text }}
           />
           <Tooltip
-            labelFormatter={formatDate}
-            formatter={(value) => [formatRate(value), `${fromCurrency} → ${toCurrency}`]}
+            labelFormatter={formatAxisDate}
+            formatter={(value) => [formatAxisRate(value), `${fromCurrency} → ${toCurrency}`]}
             contentStyle={{ backgroundColor: colors.surface, borderColor: colors.grid }}
             labelStyle={{ color: colors.text }}
           />

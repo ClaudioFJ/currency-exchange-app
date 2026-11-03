@@ -1,21 +1,27 @@
-import { formatDate, formatRate } from './format'
+import { formatDate } from './format.js'
 
-const HEADERS = ['Data', 'Moeda de origem', 'Moeda de destino', 'Cotação']
-
-export function buildCsv(rows) {
+export function buildCsv(rows, { headers, locale = 'pt-BR', separator = ';' }) {
   const lines = rows.map((row) =>
-    [formatDate(row.date), row.base, row.quote, formatRate(row.rate)].join(';')
+    [
+      formatDate(row.date, locale),
+      row.base,
+      row.quote,
+      // sem separador de milhar, para não confundir com o separador de colunas
+      row.rate.toLocaleString(locale, {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+        useGrouping: false,
+      }),
+    ].join(separator)
   )
 
-  return [HEADERS.join(';'), ...lines].join('\n')
+  return [headers.join(separator), ...lines].join('\n')
 }
 
-export function buildFileName(from, to, rows) {
+export function getDateBounds(rows) {
   const dates = rows.map((row) => row.date).sort()
-  const firstDate = dates[0]
-  const lastDate = dates[dates.length - 1]
 
-  return `cotacoes_${from}-${to}_${firstDate}_a_${lastDate}.csv`
+  return { start: dates[0], end: dates[dates.length - 1] }
 }
 
 export function downloadCsv(content, fileName) {

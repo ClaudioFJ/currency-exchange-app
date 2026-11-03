@@ -1,14 +1,17 @@
+import { useLanguage } from '../../hooks/useLanguage'
 import { formatDate, formatRate } from '../../utils/format'
 import styles from './RatesTable.module.css'
 
 const COLUMNS = [
-  { field: 'date', label: 'Data', sortable: true },
-  { field: 'base', label: 'Origem' },
-  { field: 'quote', label: 'Destino' },
-  { field: 'rate', label: 'Cotação', sortable: true, numeric: true },
+  { field: 'date', sortable: true },
+  { field: 'base' },
+  { field: 'quote' },
+  { field: 'rate', sortable: true, numeric: true },
 ]
 
 function RatesTable({ rows, sort, onSortChange }) {
+  const { t, locale } = useLanguage()
+
   function getArrow(field) {
     if (sort.field !== field) return '↕'
     return sort.direction === 'asc' ? '↑' : '↓'
@@ -37,10 +40,11 @@ function RatesTable({ rows, sort, onSortChange }) {
                     className={styles.sortButton}
                     onClick={() => onSortChange(column.field)}
                   >
-                    {column.label} <span aria-hidden="true">{getArrow(column.field)}</span>
+                    {t(`table.${column.field}`)}{' '}
+                    <span aria-hidden="true">{getArrow(column.field)}</span>
                   </button>
                 ) : (
-                  column.label
+                  t(`table.${column.field}`)
                 )}
               </th>
             ))}
@@ -49,10 +53,10 @@ function RatesTable({ rows, sort, onSortChange }) {
         <tbody>
           {rows.map((row) => (
             <tr key={row.date}>
-              <td>{formatDate(row.date)}</td>
+              <td>{formatDate(row.date, locale)}</td>
               <td>{row.base}</td>
               <td>{row.quote}</td>
-              <td className={styles.numeric}>{formatRate(row.rate)}</td>
+              <td className={styles.numeric}>{formatRate(row.rate, locale)}</td>
             </tr>
           ))}
         </tbody>

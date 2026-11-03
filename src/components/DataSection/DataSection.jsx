@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import TableFilters from '../TableFilters/TableFilters'
 import RatesTable from '../RatesTable/RatesTable'
+import ExportButton from '../ExportButton/ExportButton'
 import StatusMessage from '../StatusMessage/StatusMessage'
+import { useLanguage } from '../../hooks/useLanguage'
 import { filterRates, sortRates, validateFilters } from '../../utils/filters'
 import styles from './DataSection.module.css'
-import ExportButton from '../ExportButton/ExportButton'
 
 const INITIAL_FILTERS = { startDate: '', endDate: '', minRate: '', maxRate: '' }
 const INITIAL_SORT = { field: 'date', direction: 'desc' }
 
 function DataSection({ history, fromCurrency, toCurrency, loading, error }) {
+  const { t } = useLanguage()
   const [filters, setFilters] = useState(INITIAL_FILTERS)
   const [sort, setSort] = useState(INITIAL_SORT)
 
@@ -34,10 +36,10 @@ function DataSection({ history, fromCurrency, toCurrency, loading, error }) {
   }
 
   function renderContent() {
-    if (error) return <StatusMessage type="error" message={error} />
-    if (loading) return <StatusMessage type="loading" message="Carregando dados..." />
+    if (error) return <StatusMessage type="error" message={t(error)} />
+    if (loading) return <StatusMessage type="loading" message={t('data.loading')} />
     if (history.length === 0) {
-      return <StatusMessage type="empty" message="Nenhuma cotação disponível para este período." />
+      return <StatusMessage type="empty" message={t('data.empty')} />
     }
 
     return (
@@ -51,7 +53,7 @@ function DataSection({ history, fromCurrency, toCurrency, loading, error }) {
         />
 
         {visibleRows.length === 0 ? (
-          <StatusMessage type="empty" message="Nenhum registro encontrado com os filtros aplicados." />
+          <StatusMessage type="empty" message={t('data.noResults')} />
         ) : (
           <RatesTable rows={visibleRows} sort={sort} onSortChange={handleSortChange} />
         )}
@@ -63,7 +65,7 @@ function DataSection({ history, fromCurrency, toCurrency, loading, error }) {
     <section className={styles.card}>
       <div className={styles.header}>
         <h2 className={styles.heading}>
-          Dados {fromCurrency} → {toCurrency}
+          {t('data.heading', { pair: `${fromCurrency} → ${toCurrency}` })}
         </h2>
         <ExportButton rows={visibleRows} fromCurrency={fromCurrency} toCurrency={toCurrency} />
       </div>

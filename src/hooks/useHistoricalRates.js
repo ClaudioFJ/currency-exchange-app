@@ -24,7 +24,7 @@ export function useHistoricalRates(from, to, periodId) {
       } catch {
         if (!ignore) {
           setHistory([])
-          setError('Não foi possível carregar o histórico. Tente novamente.')
+          setError('errors.history')
         }
       } finally {
         if (!ignore) setLoading(false)

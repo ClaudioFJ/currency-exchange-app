@@ -19,3 +19,9 @@
 .subtitle {
   color: var(--color-muted);
 }
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.35rem;
+  }
+}

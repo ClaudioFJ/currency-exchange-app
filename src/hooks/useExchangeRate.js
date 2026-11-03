@@ -17,7 +17,7 @@ export function useExchangeRate(from, to) {
         const data = await getRate(from, to)
         if (!ignore) setRateData(data)
       } catch {
-        if (!ignore) setError('Não foi possível obter a cotação. Tente novamente.')
+        if (!ignore) setError('errors.rate')
       } finally {
         if (!ignore) setLoading(false)
       }

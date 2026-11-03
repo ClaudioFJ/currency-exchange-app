@@ -14,7 +14,7 @@ export function useCurrencies() {
         const filtered = data.filter((currency) => !EXCLUDED_CODES.includes(currency.iso_code))
         setCurrencies(filtered)
       } catch {
-        setError('Não foi possível carregar a lista de moedas.')
+        setError('errors.currencies')
       } finally {
         setLoading(false)
       }
