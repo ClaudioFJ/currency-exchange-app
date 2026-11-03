@@ -6,22 +6,23 @@ function toNumber(text) {
   return Number.isFinite(number) ? number : null
 }
 
+// Devolve chaves de tradução (ex.: 'filters.errors.date'); o componente traduz.
 export function validateFilters(filters) {
   const errors = {}
   const min = toNumber(filters.minRate)
   const max = toNumber(filters.maxRate)
 
   if (filters.minRate.trim() !== '' && min === null) {
-    errors.minRate = 'Cotação mínima inválida.'
+    errors.minRate = 'filters.errors.minRate'
   }
   if (filters.maxRate.trim() !== '' && max === null) {
-    errors.maxRate = 'Cotação máxima inválida.'
+    errors.maxRate = 'filters.errors.maxRate'
   }
   if (filters.startDate && filters.endDate && filters.startDate > filters.endDate) {
-    errors.date = 'A data inicial não pode ser posterior à data final.'
+    errors.date = 'filters.errors.date'
   }
   if (min !== null && max !== null && min > max) {
-    errors.rate = 'A cotação mínima não pode ser maior que a máxima.'
+    errors.rate = 'filters.errors.rate'
   }
 
   return errors

@@ -2,10 +2,15 @@
 // Como rodar: npm run test:functions
 
 import { parseAmount, convertAmount } from '../src/utils/conversion.js'
-import { formatCurrency, formatRate, formatDate } from '../src/utils/format.js'
+import { formatCurrency, formatRate, formatDate, formatPercent } from '../src/utils/format.js'
+import { calculateStats } from '../src/utils/stats.js'
+import { makePairKey, parsePairKey, toggleItem } from '../src/utils/favorites.js'
 import { toISODate, getDateRange } from '../src/utils/dates.js'
 import { filterRates, sortRates, validateFilters } from '../src/utils/filters.js'
-import { buildCsv, buildFileName } from '../src/utils/csv.js'
+import { buildCsv, getDateBounds } from '../src/utils/csv.js'
+import { localizeCurrencyNames } from '../src/utils/currencyNames.js'
+import { translate } from '../src/i18n/translate.js'
+import { TRANSLATIONS } from '../src/i18n/translations.js'
 
 let passed = 0
 let failed = 0
@@ -90,13 +95,66 @@ test('FT28', 'validateFilters cotação não numérica',
   Object.keys(validateFilters({ ...NO_FILTERS, minRate: 'abc' })), ['minRate'])
 
 // csv.js
-const csv = buildCsv(ROWS.slice(0, 2)).split('\n')
-test('FT29', 'buildCsv gera cabeçalho com ;', csv[0], 'Data;Moeda de origem;Moeda de destino;Cotação')
-test('FT30', 'buildCsv gera uma linha por registro', csv.length, 3)
-test('FT31', 'buildCsv formata data e cotação no padrão BR', csv[1], '13/10/2026;USD;BRL;5,0017')
-test('FT32', 'buildFileName usa par e datas dos registros',
-  buildFileName('USD', 'BRL', sortRates(ROWS, { field: 'date', direction: 'desc' })),
-  'cotacoes_USD-BRL_2026-10-13_a_2026-10-16.csv')
+const PT_HEADERS = ['Data', 'Moeda de origem', 'Moeda de destino', 'Cotação']
+const csvPt = buildCsv(ROWS.slice(0, 2), { headers: PT_HEADERS, locale: 'pt-BR', separator: ';' }).split('\n')
+test('FT29', 'buildCsv gera cabeçalho com ;', csvPt[0], 'Data;Moeda de origem;Moeda de destino;Cotação')
+test('FT30', 'buildCsv gera uma linha por registro', csvPt.length, 3)
+test('FT31', 'buildCsv formata data e cotação no padrão BR', csvPt[1], '13/10/2026;USD;BRL;5,0017')
+test('FT32', 'getDateBounds acha a primeira e a última data',
+  getDateBounds(sortRates(ROWS, { field: 'date', direction: 'desc' })),
+  { start: '2026-10-13', end: '2026-10-16' })
+const csvEn = buildCsv([{ date: '2026-10-16', base: 'USD', quote: 'IDR', rate: 16250.5 }],
+  { headers: ['Date', 'Base currency', 'Quote currency', 'Rate'], locale: 'en-US', separator: ',' }).split('\n')
+test('FT33', 'buildCsv em inglês usa vírgula, ponto decimal e sem separador de milhar',
+  csvEn[1], '10/16/2026,USD,IDR,16250.5000')
+
+// format.js com idiomas
+test('FT34', 'formatDate em inglês usa MM/DD/AAAA', formatDate('2026-10-19', 'en-US'), '10/19/2026')
+test('FT35', 'formatDate em espanhol usa DD/MM/AAAA', formatDate('2026-10-19', 'es-ES'), '19/10/2026')
+test('FT36', 'formatCurrency em inglês usa vírgula no milhar', formatCurrency(1234.5, 'en-US'), '1,234.50')
+
+// i18n
+test('FT37', 'translate busca chave aninhada', translate(TRANSLATIONS.en, 'converter.heading'), 'Converter')
+test('FT38', 'translate troca os marcadores {nome}',
+  translate(TRANSLATIONS.pt, 'filters.countOther', { count: 12 }), '12 registros encontrados')
+test('FT39', 'translate devolve a própria chave quando não existe',
+  translate(TRANSLATIONS.pt, 'chave.inexistente'), 'chave.inexistente')
+
+function listKeys(object, prefix = '') {
+  return Object.entries(object).flatMap(([key, value]) =>
+    typeof value === 'object' ? listKeys(value, `${prefix}${key}.`) : [`${prefix}${key}`]
+  ).sort()
+}
+test('FT40', 'inglês tem exatamente as mesmas chaves do português', listKeys(TRANSLATIONS.en), listKeys(TRANSLATIONS.pt))
+test('FT41', 'espanhol tem exatamente as mesmas chaves do português', listKeys(TRANSLATIONS.es), listKeys(TRANSLATIONS.pt))
+
+const SAMPLE_CURRENCIES = [
+  { iso_code: 'BRL', name: 'Brazilian Real' },
+  { iso_code: 'CMD', name: 'COMESA Dollar' },
+]
+test('FT42', 'localizeCurrencyNames traduz o nome da moeda',
+  localizeCurrencyNames(SAMPLE_CURRENCIES, 'pt-BR')[0].name, 'Real brasileiro')
+test('FT43', 'localizeCurrencyNames mantém o nome da API quando não há tradução',
+  localizeCurrencyNames(SAMPLE_CURRENCIES, 'pt-BR')[1].name, 'COMESA Dollar')
+
+// stats.js (ROWS fora de ordem, para provar que a função ordena antes)
+const stats = calculateStats([ROWS[2], ROWS[0], ROWS[3], ROWS[1]])
+test('FT44', 'calculateStats acha a mínima e a data dela', [stats.min.rate, stats.min.date], [5.0017, '2026-10-13'])
+test('FT45', 'calculateStats acha a máxima e a data dela', [stats.max.rate, stats.max.date], [5.0698, '2026-10-16'])
+test('FT46', 'calculateStats calcula a média', formatRate(stats.average), '5,0335')
+test('FT47', 'calculateStats calcula a variação entre a primeira e a última data',
+  formatPercent(stats.changePercent), '+1,36%')
+test('FT48', 'calculateStats devolve null sem dados', calculateStats([]), null)
+test('FT49', 'formatPercent mostra o sinal de queda', formatPercent(-0.5, 'en-US'), '-0.50%')
+
+// favorites.js
+test('FT50', 'makePairKey junta as moedas', makePairKey('USD', 'BRL'), 'USD-BRL')
+test('FT51', 'parsePairKey separa as moedas', parsePairKey('EUR-JPY'), { from: 'EUR', to: 'JPY' })
+test('FT52', 'toggleItem adiciona quando não existe', toggleItem(['USD-BRL'], 'EUR-BRL'), ['USD-BRL', 'EUR-BRL'])
+test('FT53', 'toggleItem remove quando já existe', toggleItem(['USD-BRL', 'EUR-BRL'], 'USD-BRL'), ['EUR-BRL'])
+const favoritesList = ['USD-BRL']
+toggleItem(favoritesList, 'EUR-BRL')
+test('FT54', 'toggleItem não altera a lista original', favoritesList, ['USD-BRL'])
 
 console.log(`\n${passed} passaram, ${failed} falharam`)
 if (failed > 0) process.exit(1)

@@ -1,10 +1,13 @@
+import { useLanguage } from '../../hooks/useLanguage'
 import styles from './AmountInput.module.css'
 
 function AmountInput({ value, onChange, error }) {
+  const { t } = useLanguage()
+
   return (
     <div className={styles.field}>
       <label htmlFor="amount" className={styles.label}>
-        Valor
+        {t('converter.amount')}
       </label>
       <input
         id="amount"
@@ -15,7 +18,7 @@ function AmountInput({ value, onChange, error }) {
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? 'amount-error' : undefined}
-        placeholder="Ex.: 100 ou 10,50"
+        placeholder={t('converter.amountPlaceholder')}
       />
       {error && (
         <span id="amount-error" className={styles.error}>

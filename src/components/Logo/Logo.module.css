@@ -1,0 +1,27 @@
+.logo {
+  flex-shrink: 0;
+}
+
+.badge {
+  fill: var(--color-primary);
+}
+
+.arrow,
+.arrowSoft {
+  fill: none;
+  stroke: var(--color-on-primary);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.arrowSoft {
+  opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 36px;
+    height: 36px;
+  }
+}

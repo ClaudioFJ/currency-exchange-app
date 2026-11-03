@@ -1,11 +1,42 @@
 .header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .title {
   font-size: 1.75rem;
+  line-height: 1.2;
 }
 
 .subtitle {
   color: var(--color-muted);
+}
+
+@media (max-width: 480px) {
+  .brand {
+    gap: 10px;
+  }
+
+  .title {
+    font-size: 1.35rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+  }
 }

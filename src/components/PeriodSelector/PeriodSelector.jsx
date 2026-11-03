@@ -1,8 +1,11 @@
+import { useLanguage } from '../../hooks/useLanguage'
 import styles from './PeriodSelector.module.css'
 
 function PeriodSelector({ periods, selected, onChange }) {
+  const { t } = useLanguage()
+
   return (
-    <div className={styles.group} role="group" aria-label="Período de análise">
+    <div className={styles.group} role="group" aria-label={t('history.periodGroup')}>
       {periods.map((period) => {
         const isActive = period.id === selected
 
@@ -14,7 +17,7 @@ function PeriodSelector({ periods, selected, onChange }) {
             aria-pressed={isActive}
             onClick={() => onChange(period.id)}
           >
-            {period.label}
+            {t(`periods.${period.id}`)}
           </button>
         )
       })}

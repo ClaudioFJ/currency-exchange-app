@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import Header from './components/Header/Header'
 import CurrencyConverter from './components/CurrencyConverter/CurrencyConverter'
+import HistorySection from './components/HistorySection/HistorySection'
+import DataSection from './components/DataSection/DataSection'
 import { useCurrencies } from './hooks/useCurrencies'
 import { useExchangeRate } from './hooks/useExchangeRate'
-import styles from './App.module.css'
-import HistorySection from './components/HistorySection/HistorySection'
 import { useHistoricalRates } from './hooks/useHistoricalRates'
+import { useTheme } from './hooks/useTheme'
+import { useFavorites } from './hooks/useFavorites'
+import { makePairKey, parsePairKey } from './utils/favorites'
 import { DEFAULT_PERIOD } from './constants/periods'
-import DataSection from './components/DataSection/DataSection'
-
+import styles from './App.module.css'
 
 function App() {
   const [fromCurrency, setFromCurrency] = useState('USD')
@@ -16,18 +18,27 @@ function App() {
   const [amount, setAmount] = useState('100')
   const [period, setPeriod] = useState(DEFAULT_PERIOD)
 
+  const { theme, toggleTheme } = useTheme()
+  const { favorites, toggleFavorite, removeFavorite } = useFavorites()
   const { currencies, error: currenciesError } = useCurrencies()
   const {
     rateData,
     loading: rateLoading,
     error: rateError,
   } = useExchangeRate(fromCurrency, toCurrency)
-
   const {
     history,
     loading: historyLoading,
     error: historyError,
   } = useHistoricalRates(fromCurrency, toCurrency, period)
+
+  const currentPair = makePairKey(fromCurrency, toCurrency)
+
+  function handleSelectFavorite(pair) {
+    const { from, to } = parsePairKey(pair)
+    setFromCurrency(from)
+    setToCurrency(to)
+  }
 
   function handleSwap() {
     setFromCurrency(toCurrency)
@@ -46,7 +57,7 @@ function App() {
 
   return (
     <div className={styles.container}>
-      <Header title="Currency Exchange App" subtitle="Conversão e análise de moedas" />
+      <Header theme={theme} onToggleTheme={toggleTheme} />
 
       <main className={styles.main}>
         <CurrencyConverter
@@ -61,7 +72,13 @@ function App() {
           onToChange={handleToChange}
           onAmountChange={setAmount}
           onSwap={handleSwap}
+          favorites={favorites}
+          currentPair={currentPair}
+          onToggleFavorite={() => toggleFavorite(currentPair)}
+          onSelectFavorite={handleSelectFavorite}
+          onRemoveFavorite={removeFavorite}
         />
+
         <HistorySection
           history={history}
           period={period}
@@ -70,7 +87,9 @@ function App() {
           toCurrency={toCurrency}
           loading={historyLoading}
           error={historyError}
+          theme={theme}
         />
+
         <DataSection
           key={`${fromCurrency}-${toCurrency}-${period}`}
           history={history}

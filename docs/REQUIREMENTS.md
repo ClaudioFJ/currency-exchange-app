@@ -1,7 +1,7 @@
 # Requisitos — Currency Exchange App
 
 > Documento de levantamento de requisitos do Projeto 01.
-> Status: rascunho inicial (revisar e ajustar conforme o desenvolvimento).
+> Versão 2 (03/11/2026): inclui idioma, modo escuro, estatísticas do período e pares favoritos.
 
 ---
 
@@ -95,6 +95,30 @@ Permitir que o usuário converta valores entre duas moedas, consulte a taxa e a 
 | RF27 | O sistema deve exibir mensagem amigável quando a API falhar. |
 | RF28 | O sistema deve exibir mensagem quando não houver dados para o período ou filtros escolhidos. |
 
+### Personalização (versão 2)
+
+| ID | Requisito |
+| --- | --- |
+| RF29 | O usuário deve poder escolher o idioma da interface: português, inglês ou espanhol. |
+| RF30 | Números e datas devem ser exibidos no formato do idioma escolhido. |
+| RF31 | Os nomes das moedas devem aparecer no idioma escolhido. |
+| RF32 | O usuário deve poder alternar entre modo claro e modo escuro. |
+
+### Estatísticas do período (versão 2)
+
+| ID | Requisito |
+| --- | --- |
+| RF33 | O sistema deve exibir a cotação mínima, a máxima (com as datas) e a média do período selecionado. |
+| RF34 | O sistema deve exibir a variação percentual entre a primeira e a última cotação do período. |
+
+### Pares favoritos (versão 2)
+
+| ID | Requisito |
+| --- | --- |
+| RF35 | O usuário deve poder salvar o par de moedas atual como favorito. |
+| RF36 | O usuário deve poder selecionar um par favorito com um clique. |
+| RF37 | O usuário deve poder remover um par dos favoritos. |
+
 ---
 
 ## 6. Requisitos não funcionais
@@ -109,7 +133,8 @@ Permitir que o usuário converta valores entre duas moedas, consulte a taxa e a 
 | RNF06 | A aplicação não deve exigir chave de API nem cadastro. |
 | RNF07 | O código deve ser versionado com Git, com commits pequenos e semânticos, e publicado em repositório público no GitHub. |
 | RNF08 | O projeto deve poder ser instalado e executado seguindo apenas as instruções do README. |
-| RNF09 | Os valores e datas devem ser exibidos no formato brasileiro (ex.: `1.234,56` e `20/10/2026`). |
+| RNF09 | Os valores e datas devem seguir o formato do idioma escolhido (ex.: `1.234,56` e `20/10/2026` em português; `1,234.56` e `10/20/2026` em inglês). |
+| RNF10 | O idioma, o tema e os favoritos devem ser lembrados entre visitas, no próprio navegador (`localStorage`). |
 
 ---
 
@@ -131,9 +156,13 @@ Permitir que o usuário converta valores entre duas moedas, consulte a taxa e a 
 | RN12 | Filtros combinados funcionam como "E": o registro só aparece se atender a todos os filtros preenchidos. Filtros vazios são ignorados. |
 | RN13 | A ordenação padrão da tabela é por data, da mais recente para a mais antiga. |
 | RN14 | O CSV contém exatamente os registros visíveis após filtros e ordenação. |
-| RN15 | O CSV usa `;` como separador (compatível com o Excel em português). |
-| RN16 | O nome do arquivo segue o padrão `cotacoes_ORIGEM-DESTINO_DATAINICIAL_a_DATAFINAL.csv` (ex.: `cotacoes_USD-BRL_2026-10-13_a_2026-10-20.csv`). |
+| RN15 | O CSV usa `;` como separador em português e espanhol (compatível com o Excel nesses idiomas) e `,` em inglês. As cotações vão sem separador de milhar. |
+| RN16 | O nome do arquivo segue o padrão `cotacoes_ORIGEM-DESTINO_DATAINICIAL_a_DATAFINAL.csv` (ex.: `cotacoes_USD-BRL_2026-10-13_a_2026-10-20.csv`), traduzido conforme o idioma (`exchange-rates_..._to_...` em inglês, `cotizaciones_..._a_...` em espanhol). |
 | RN17 | Ao trocar o par de moedas ou o período, os filtros da tabela são limpos. |
+| RN18 | No primeiro acesso, o idioma segue o do navegador (se for português, inglês ou espanhol); nos outros casos, português. |
+| RN19 | No primeiro acesso, o tema segue a preferência do sistema operacional. |
+| RN20 | As estatísticas usam todo o histórico do período, sem os filtros da tabela. A variação é `(última − primeira) ÷ primeira × 100`. |
+| RN21 | Um par de moedas aparece no máximo uma vez na lista de favoritos. |
 
 ---
 
@@ -170,3 +199,13 @@ Permitir que o usuário converta valores entre duas moedas, consulte a taxa e a 
 ### Responsividade
 
 - **Dado** que acesso pelo celular (360 px), **então** todos os elementos ficam visíveis e utilizáveis sem rolagem horizontal.
+
+### Personalização, estatísticas e favoritos (versão 2)
+
+- **Quando** escolho "English" no seletor de idioma, **então** todos os textos, números, datas, nomes de moedas e o CSV passam para o inglês.
+- **Quando** recarrego a página, **então** o idioma, o tema e os favoritos continuam como deixei.
+- **Quando** clico no botão de tema, **então** a página inteira, incluindo o gráfico, alterna entre claro e escuro.
+- **Dado** um período carregado, **então** vejo a mínima e a máxima com as datas, a média e a variação com seta e cor (alta ou queda).
+- **Quando** clico na ☆, **então** o par atual aparece nos favoritos e a estrela fica preenchida.
+- **Quando** clico num favorito, **então** o conversor, o gráfico e a tabela passam para aquele par.
+- **Quando** clico no × de um favorito, **então** ele sai da lista.

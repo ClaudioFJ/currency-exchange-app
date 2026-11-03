@@ -1,10 +1,9 @@
 # Currency Exchange App
 
-Single Page Application em React para **conversão e análise de moedas**, consumindo a [API Frankfurter](https://frankfurter.dev).
+Single Page Application em React para **MoneyMap**, consumindo a [API Frankfurter](https://frankfurter.dev).
 
 Projeto individual desenvolvido de forma incremental, aplicando os conteúdos das aulas: componentização, props, eventos, `useState`, lifting state up, `useEffect`, hooks customizados, consumo de API, manipulação de arrays e objetos, gráficos, filtros, ordenação e exportação CSV.
 
-![Tela da aplicação](docs/images/app-desktop.png)
 
 ---
 
@@ -30,9 +29,20 @@ Projeto individual desenvolvido de forma incremental, aplicando os conteúdos da
 
 **Exportação CSV**
 - Exporta apenas os registros filtrados, na ordem exibida.
-- Arquivo com cabeçalho, separador `;` e acentuação compatível com o Excel.
-- Nome identificável: `cotacoes_USD-BRL_2026-09-27_a_2026-10-27.csv`.
+- Arquivo com cabeçalho e acentuação compatível com o Excel (separador `;` em português e espanhol, `,` em inglês).
+- Nome identificável e traduzido: `cotacoes_USD-BRL_2026-09-27_a_2026-10-27.csv`.
 - Botão desabilitado quando não há registros.
+
+**Estatísticas do período**
+- Cotação mínima e máxima (com as datas), média e variação % do período, com seta e cor de alta ou queda.
+
+**Pares favoritos**
+- Estrela para salvar o par atual e atalhos para trocar de par com um clique.
+- Os favoritos ficam salvos no navegador.
+
+**Idioma e tema**
+- Interface em português, inglês e espanhol, com números, datas, nomes das moedas e CSV no formato de cada idioma.
+- Modo claro e escuro. O idioma e o tema escolhidos são lembrados na próxima visita.
 
 **Estados da interface**
 - Mensagens de carregamento, erro da API e ausência de dados.
@@ -48,6 +58,9 @@ Projeto individual desenvolvido de forma incremental, aplicando os conteúdos da
 | Vite | Ambiente de desenvolvimento e build |
 | CSS Modules | Estilos isolados por componente |
 | Recharts | Gráfico do histórico |
+| Context API | Idioma compartilhado por toda a aplicação |
+| Intl (JavaScript) | Formatação de números, datas e nomes de moedas por idioma |
+| localStorage | Idioma, tema e favoritos salvos no navegador |
 | Fetch API + async/await | Consumo da API Frankfurter |
 | Postman | Investigação e testes dos endpoints |
 | Git + GitHub | Versionamento |
@@ -60,7 +73,7 @@ Projeto individual desenvolvido de forma incremental, aplicando os conteúdos da
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/SEU-USUARIO/currency-exchange-app.git
+git clone https://github.com/ClaudioFJ/currency-exchange-app.git
 cd currency-exchange-app
 
 # 2. Instalar as dependências
@@ -87,7 +100,8 @@ Acesse `http://localhost:5173` no navegador. A API Frankfurter é pública e nã
 ```
 src/
 ├── components/     Componentes React, cada um com seu .jsx e .module.css
-├── hooks/          Hooks customizados de consulta à API
+├── hooks/          Hooks customizados (API, tema, idioma e favoritos)
+├── i18n/           Idiomas, dicionário de traduções e Context
 ├── services/       Comunicação com a API Frankfurter
 ├── utils/          Funções puras: conversão, formatação, datas, filtros e CSV
 ├── constants/      URL da API, períodos e configurações
@@ -100,6 +114,14 @@ scripts/            Script de testes das funções
 ### Componentes
 
 ```
+LanguageProvider
+└── App
+├── Header
+│   ├── LanguageSelect
+│   └── ThemeToggle
+├── CurrencyConverter
+│   ├── FavoriteButton
+│   ├── FavoritesBar
 App
 ├── Header
 ├── CurrencyConverter
@@ -110,6 +132,7 @@ App
 │   └── ConversionResult
 ├── HistorySection
 │   ├── PeriodSelector
+│   ├── StatsCards
 │   └── RateChart
 └── DataSection
     ├── TableFilters
@@ -123,6 +146,8 @@ App
 
 - O **par de moedas**, o **valor** e o **período** ficam no `App` (*lifting state up*), porque o conversor, o gráfico e a tabela dependem deles.
 - Os hooks `useCurrencies`, `useExchangeRate` e `useHistoricalRates` usam `useEffect` para buscar os dados sempre que o par ou o período mudam, e devolvem `{ dados, loading, error }`.
+- O **idioma** fica num Context (`LanguageProvider`). Qualquer componente lê os textos com o hook `useLanguage`, sem precisar receber props.
+- O **tema** e os **favoritos** também ficam no `App`, em hooks próprios (`useTheme` e `useFavorites`) que salvam a escolha no `localStorage`.
 - **Filtros e ordenação** ficam no `DataSection`, o único que usa esses estados. A mesma lista filtrada alimenta a tabela, o contador e a exportação.
 - O `DataSection` recebe uma `key` formada pelo par e pelo período; ao trocar qualquer um deles, o React recria o componente e os filtros são limpos.
 
@@ -151,14 +176,6 @@ Detalhes de cada componente em [`docs/COMPONENTS.md`](docs/COMPONENTS.md).
 
 ---
 
-## Imagens
-
-| Desktop | Celular |
-| --- | --- |
-| ![Desktop](docs/images/app-desktop.png) | ![Celular](docs/images/app-mobile.png) |
-
----
-
 ## Autor
 
-Desenvolvido por **SEU NOME** como Projeto 01 da disciplina.
+Desenvolvido por **Claudio junior** como Projeto 01 da disciplina.
